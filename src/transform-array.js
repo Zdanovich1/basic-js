@@ -14,61 +14,36 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 function transform(arr) {
-
-  if (!Array.isArray(arr)) {
-    throw new Error('\'arr\' parameter must be an instance of the Array!');
-  }
-
+  if (!Array.isArray(arr)) throw new Error('\'arr\' parameter must be an instance of the Array!');
 
   let newArr = arr.slice();
-
-  // console.log(arr);
-  //console.log(newArr);
-
-  let resultArr = [];
-
+  //basic sequence interactions work well
   for (let i = 0; i < newArr.length; i++) {
-    /*basic sequence interactions work well*/
-    if (typeof newArr[0] == 'string') {
-      newArr.shift()
-    }
-    if (typeof newArr[newArr.length - 1] == 'string') {
-      newArr.pop()
-    }
-
-
-
-    if (newArr[i] === '--discard-next') {
-      //console.log(newArr[i])
-      newArr.splice(i, 2)
-      //console.log(newArr[i])
-    }
-
-    if (newArr[i] === '--discard-prev') {
-      newArr.splice(i - 1, 2)
-    }
-
-    if (newArr[i] === '--double-next') {
-
-      newArr.splice(i, 1, newArr[i + 1])
-    }
-
-    if (newArr[i] === '--double-prev') {
-      // console.log('catch')
-      // console.log(newArr[i])
-      newArr.splice(i - 1, 0, newArr[i - 1])
-      // console.log(newArr[i])
-      newArr.splice(i + 1, 1)
-
-
-    }
-
-
+    if (newArr[0] === '--discard-next' || newArr[0] === '--discard-prev' || newArr[0] === '--double-next' || newArr[0] === '--double-prev') newArr.shift();
+    if (newArr[newArr.length - 1] === '--discard-next' || newArr[newArr.length - 1] === '--discard-prev' || newArr[newArr.length - 1] === '--double-next' || newArr[newArr.length - 1] === '--double-prev') newArr.pop();
   }
 
-  // console.log(arr);
-  return newArr;
+  for (let i = 0; i < newArr.length; i++) {
+    if (newArr[i] === '--discard-next') {
+      newArr.splice(i + 1, 1);
+      break;
+    }
 
+    if (newArr[i] === '--discard-prev') newArr.splice(i - 1, 1);
+    if (newArr[i] === '--double-next') newArr.splice(i + 1, 0, newArr[i + 1]);
+
+    if (newArr[i] === '--double-prev') {
+      newArr.splice(i - 1, 0, newArr[i - 1]);
+      break;
+    }
+  }
+  for (let j = 0; j < newArr.length; j++) {
+    if (newArr[j] === '--double-prev' || newArr[j] === '--double-next' || newArr[j] === '--discard-prev' || newArr[j] === '--discard-next') {
+      newArr.splice(j, 1);
+      j--;
+    }
+  }
+  return newArr
 }
 
 module.exports = {
