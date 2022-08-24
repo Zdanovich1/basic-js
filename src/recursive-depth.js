@@ -15,14 +15,13 @@ const { NotImplementedError } = require('../extensions/index.js');
 class DepthCalculator {
   calculateDepth(arr) {
     let deep = 0;
-
     arr.forEach(element => {
       if (Array.isArray(element)) {
-        deep = Math.max(this.calculateDepth(element), deep);
+        deep = Math.max(deep, this.calculateDepth(element));
       }
     });
-
-    return (1 + deep);
+    deep++;
+    return deep;
   }
 
   //Без рекурсии:
